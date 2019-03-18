@@ -50,7 +50,7 @@ func (o *Oncall) Sanitize() {
 
 // DeepCompare returns true if o and a are equal, excluding details
 func (o *Oncall) DeepCompare(a *Oncall) bool {
-	if o.ID != a.ID || o.Name != a.Name || o.Number != a.Number {
+	if o.ID != a.ID || o.Name != a.Name || o.Number != a.Number || o.Members == nil {
 		return false
 	}
 
