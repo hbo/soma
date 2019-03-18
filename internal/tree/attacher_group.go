@@ -110,7 +110,8 @@ func (teg *Group) Detach() {
 	bucket := teg.Parent.(Bucketeer).GetBucket()
 
 	teg.deletePropertyAllInherited()
-	// TODO delete all inherited checks + check instances
+	teg.deleteCheckLocalAll()
+	teg.updateCheckInstances()
 
 	teg.Parent.Unlink(UnlinkRequest{
 		ParentType: teg.Parent.(Builder).GetType(),

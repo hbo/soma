@@ -110,7 +110,8 @@ func (tec *Cluster) Detach() {
 	bucket := tec.Parent.(Bucketeer).GetBucket()
 
 	tec.deletePropertyAllInherited()
-	// TODO delete all inherited checks + check instances
+	tec.deleteCheckLocalAll()
+	tec.updateCheckInstances()
 
 	tec.Parent.Unlink(UnlinkRequest{
 		ParentType: tec.Parent.(Builder).GetType(),

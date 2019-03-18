@@ -100,7 +100,8 @@ func (ten *Node) Detach() {
 	bucket := ten.Parent.(Bucketeer).GetBucket()
 
 	ten.deletePropertyAllInherited()
-	// TODO delete all inherited checks + check instances
+	ten.deleteCheckLocalAll()
+	ten.updateCheckInstances()
 
 	ten.Parent.Unlink(UnlinkRequest{
 		ParentType: ten.Parent.(Builder).GetType(),
