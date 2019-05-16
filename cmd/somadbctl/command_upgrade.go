@@ -45,6 +45,7 @@ var UpgradeVersions = map[string]map[int]func(int, string, bool) int{
 		201811120002: upgradeSomaTo201811150001,
 		201811150001: upgradeSomaTo201901300001,
 		201901300001: upgradeSomaTo201903130001,
+		201905130001: upgradeSomaTo201905130001,
 	},
 	`root`: map[int]func(int, string, bool) int{
 		000000000001: installRoot201605150001,
