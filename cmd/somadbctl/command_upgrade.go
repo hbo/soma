@@ -1140,24 +1140,39 @@ func upgradeSomaTo201903130001(curr int, tool string, printOnly bool) int {
 	return 201903130001
 }
 
-//This is work in progess
 func upgradeSomaTo201905130001(curr int, tool string, printOnly bool) int {
 	if curr != 201905130001 {
 		return 0
 	}
 	stmts := []string{
-		`ALTER TABLE soma.constraints_service_property ADD service_property_id uuid NOT NULL REFERENCES service_property(id);`,
-		`ALTER TABLE soma.authorizations_global ADD unique index _unique_team_global_authoriz ( team_id, permission_id ) where team_id IS NOT NULL;`,
-		`ALTER TABLE soma.authorizations_repository ADD unique index _unique_admin_repo_authoriz ( admin_id, permission_id, repository_id ) where admin_id IS NOT NULL;`,
-		`ALTER TABLE soma.authorizations_repository ADD unique index _unique_user_repo_authoriz ( user_id, permission_id, repository_id ) where user_id IS NOT NULL;`,
-		`ALTER TABLE soma.authorizations_repository ADD unique index _unique_tool_repo_authoriz ( tool_id, permission_id, repository_id ) where tool_id IS NOT NULL;`,
-		`ALTER TABLE soma.authorizations_repository ADD unique index _unique_team_repo_authoriz ( team_id, permission_id, repository_id ) where team_id IS NOT NULL;`,
-		`ALTER TABLE soma.authorizations_monitoring ADD unique index _unique_user_monitoring_authoriz ( user_id, permission_id, monitoring_id ) where user_id IS NOT NULL;`,
-		`ALTER TABLE soma.authorizations_monitoring ADD unique index _unique_tool_monitoring_authoriz ( tool_id, permission_id, monitoring_id ) where tool_id IS NOT NULL;`,
-		`ALTER TABLE soma.authorizations_monitoring ADD unique index _unique_team_monitoring_authoriz ( team_id, permission_id, monitoring_id ) where team_id IS NOT NULL;`,
-		`ALTER TABLE soma.authorizations_team ADD unique index _unique_user_team_authoriz ( user_id, permission_id, authorized_team_id ) where user_id IS NOT NULL;`,
-		`ALTER TABLE soma.authorizations_team ADD unique index _unique_tool_team_authoriz ( tool_id, permission_id, authorized_team_id ) where tool_id IS NOT NULL;`,
-		`ALTER TABLE soma.authorizations_team ADD unique index _unique_team_team_authoriz ( team_id, permission_id, authorized_team_id ) where team_id IS NOT NULL;`,
+		`ALTER TABLE soma.constraints_service_property ADD service_property_id uuid REFERENCES service_property(id);`,
+		`update soma.constraints_service_property csp set service_property_id = sp.id from soma.service_property sp where csp.team_id = sp.team_id and csp.name = sp.name;`,
+		`ALTER TABLE soma.constraints_service_property ALTER service_property_id set not null;`,
+		`delete from soma.authorizations_global aga using soma.authorizations_global agb where aga.permission_id = agb.permission_id and aga.team_id = agb.team_id and aga.created_at < agb.created_at;`,
+		`delete from soma.authorizations_global aga using soma.authorizations_global agb where aga.permission_id = agb.permission_id and aga.admin_id = agb.admin_id and aga.created_at < agb.created_at;`,
+		`delete from soma.authorizations_global aga using soma.authorizations_global agb where aga.permission_id = agb.permission_id and aga.user_id = agb.user_id and aga.created_at < agb.created_at;`,
+		`delete from soma.authorizations_global aga using soma.authorizations_global agb where aga.permission_id = agb.permission_id and aga.tool_id = agb.tool_id and aga.created_at < agb.created_at;`,
+		`ALTER TABLE soma.authorizations_global ADD constraint _unique_team_global_authoriz unique ( team_id, permission_id );`,
+		`delete from soma.authorizations_repository aga using soma.authorizations_repository agb where aga.permission_id = agb.permission_id and aga.team_id = agb.team_id and aga.repository_id = agb.repository_id and aga.created_at < agb.created_at;`,
+		`delete from soma.authorizations_repository aga using soma.authorizations_repository agb where aga.permission_id = agb.permission_id and aga.admin_id = agb.admin_id and aga.repository_id = agb.repository_id and aga.created_at < agb.created_at;`,
+		`delete from soma.authorizations_repository aga using soma.authorizations_repository agb where aga.permission_id = agb.permission_id and aga.user_id = agb.user_id and aga.repository_id = agb.repository_id and aga.created_at < agb.created_at;`,
+		`delete from soma.authorizations_repository aga using soma.authorizations_repository agb where aga.permission_id = agb.permission_id and aga.tool_id = agb.tool_id and aga.repository_id = agb.repository_id and aga.created_at < agb.created_at;`,
+		`ALTER TABLE soma.authorizations_repository ADD constraint _unique_admin_repo_authoriz unique ( admin_id, permission_id, repository_id );`,
+		`ALTER TABLE soma.authorizations_repository ADD constraint _unique_user_repo_authoriz unique ( user_id, permission_id, repository_id );`,
+		`ALTER TABLE soma.authorizations_repository ADD constraint _unique_tool_repo_authoriz unique ( tool_id, permission_id, repository_id );`,
+		`ALTER TABLE soma.authorizations_repository ADD constraint _unique_team_repo_authoriz unique ( team_id, permission_id, repository_id );`,
+		`delete from soma.authorizations_monitoring aga using soma.authorizations_monitoring agb where aga.permission_id = agb.permission_id and aga.team_id = agb.team_id and aga.monitoring_id = agb.monitoring_id and aga.created_at < agb.created_at;`,
+		`delete from soma.authorizations_monitoring aga using soma.authorizations_monitoring agb where aga.permission_id = agb.permission_id and aga.tool_id = agb.tool_id and aga.monitoring_id = agb.monitoring_id and aga.created_at < agb.created_at;`,
+		`delete from soma.authorizations_monitoring aga using soma.authorizations_monitoring agb where aga.permission_id = agb.permission_id and aga.user_id = agb.user_id and aga.monitoring_id = agb.monitoring_id and aga.created_at < agb.created_at;`,
+		`ALTER TABLE soma.authorizations_monitoring ADD constraint _unique_user_monitoring_authoriz unique ( user_id, permission_id, monitoring_id );`,
+		`ALTER TABLE soma.authorizations_monitoring ADD constraint _unique_tool_monitoring_authoriz unique ( tool_id, permission_id, monitoring_id );`,
+		`ALTER TABLE soma.authorizations_monitoring ADD constraint _unique_team_monitoring_authoriz unique  ( team_id, permission_id, monitoring_id );`,
+		`delete from soma.authorizations_team aga using soma.authorizations_team agb where aga.permission_id = agb.permission_id and aga.team_id = agb.team_id and aga.authorized_team_id = agb.authorized_team_id and aga.created_at < agb.created_at;`,
+		`delete from soma.authorizations_team aga using soma.authorizations_team agb where aga.permission_id = agb.permission_id and aga.tool_id = agb.tool_id and aga.authorized_team_id = agb.authorized_team_id and aga.created_at < agb.created_at;`,
+		`delete from soma.authorizations_team aga using soma.authorizations_team agb where aga.permission_id = agb.permission_id and aga.user_id = agb.user_id and aga.authorized_team_id = agb.authorized_team_id and aga.created_at < agb.created_at;`,
+		`ALTER TABLE soma.authorizations_team ADD constraint _unique_user_team_authoriz unique ( user_id, permission_id, authorized_team_id );`,
+		`ALTER TABLE soma.authorizations_team ADD constraint _unique_tool_team_authoriz unique ( tool_id, permission_id, authorized_team_id );`,
+		`ALTER TABLE soma.authorizations_team ADD constraint _unique_team_team_authoriz unique ( team_id, permission_id, authorized_team_id );`,
 	}
 	stmts = append(stmts,
 		fmt.Sprintf("INSERT INTO public.schema_versions (schema, version, description) VALUES ('soma', 201905130001, 'Upgrade - somadbctl %s');", tool),
