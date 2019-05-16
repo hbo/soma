@@ -122,10 +122,9 @@ func (r *NodeRead) process(q *msg.Request) {
 
 	switch q.Action {
 	case msg.ActionList:
-		r.list(q, &result)
+		r.list(q, &result, false)
 	case msg.ActionSearch:
-		// TODO r.search(q, &result)
-		r.list(q, &result)
+		r.list(q, &result, true)
 	case msg.ActionSync:
 		r.sync(q, &result)
 	case msg.ActionShow:
@@ -139,11 +138,12 @@ func (r *NodeRead) process(q *msg.Request) {
 }
 
 // list returns all nodes
-func (r *NodeRead) list(q *msg.Request, mr *msg.Result) {
+func (r *NodeRead) list(q *msg.Request, mr *msg.Result, search bool) {
 	var (
 		rows             *sql.Rows
 		err              error
 		nodeID, nodeName string
+		online           bool
 	)
 
 	if rows, err = r.stmtList.Query(); err != nil {
@@ -152,10 +152,13 @@ func (r *NodeRead) list(q *msg.Request, mr *msg.Result) {
 	}
 
 	for rows.Next() {
-		if err = rows.Scan(&nodeID, &nodeName); err != nil {
+		if err = rows.Scan(&nodeID, &nodeName, &online); err != nil {
 			rows.Close()
 			mr.ServerError(err, q.Section)
 			return
+		}
+		if !search && !online {
+			continue
 		}
 		mr.Node = append(mr.Node, proto.Node{
 			ID:   nodeID,

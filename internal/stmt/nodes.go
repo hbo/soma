@@ -14,9 +14,9 @@ const (
 
 	NodeList = `
 SELECT node_id,
-       node_name
-FROM   soma.nodes
-WHERE  node_online;`
+       node_name,
+    	   node_online
+FROM   soma.nodes;`
 
 	// XXX compat to keep old code compiling
 	ListNodes       = NodeList
