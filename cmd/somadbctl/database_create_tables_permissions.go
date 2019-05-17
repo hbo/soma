@@ -297,6 +297,7 @@ create table if not exists soma.authorizations_team (
     UNIQUE ( user_id, tool_id, team_id, category, permission_id, authorized_team_id )
 );`
 	queries[idx] = "createTableTeamAuthorizations"
+	idx++
 
 	queryMap[`createUniqueIndexUserTeamAuthorizations`] = `
 create unique index _unique_user_team_authoriz
