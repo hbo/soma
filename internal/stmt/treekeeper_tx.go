@@ -872,7 +872,9 @@ INSERT INTO soma.node_bucket_assignment (
             organizational_team_id)
 SELECT $1::uuid,
        $2::uuid,
-       $3::uuid;`
+       $3::uuid
+ON CONFLICT ON CONSTRAINT node_bucket_assignment_node_id_key
+DO NOTHING;`
 
 	TxBucketRemoveNode = `
 DELETE FROM soma.node_bucket_assignment
