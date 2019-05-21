@@ -282,11 +282,13 @@ func (x *Rest) GroupMemberUnassign(w http.ResponseWriter, r *http.Request,
 	switch params.ByName(`memberType`) {
 	case msg.EntityGroup:
 		request.TargetEntity = msg.EntityGroup
+		request.Group.BucketID = params.ByName(`bucketID`)
 		request.Group.MemberGroups = &[]proto.Group{
 			proto.Group{ID: params.ByName(`memberID`)},
 		}
 	case msg.EntityCluster:
 		request.TargetEntity = msg.EntityCluster
+		request.Cluster.BucketID = params.ByName(`bucketID`)
 		request.Group.MemberClusters = &[]proto.Cluster{
 			proto.Cluster{ID: params.ByName(`memberID`)},
 		}
