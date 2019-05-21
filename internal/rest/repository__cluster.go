@@ -253,6 +253,7 @@ func (x *Rest) ClusterMemberUnassign(w http.ResponseWriter, r *http.Request,
 	switch params.ByName(`memberType`) {
 	case msg.EntityNode:
 		request.TargetEntity = msg.EntityNode
+		request.Cluster.BucketID = params.ByName(`bucketID`)
 		request.Cluster.Members = &[]proto.Node{
 			proto.Node{ID: params.ByName(`memberID`)},
 		}

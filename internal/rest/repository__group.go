@@ -295,6 +295,7 @@ func (x *Rest) GroupMemberUnassign(w http.ResponseWriter, r *http.Request,
 		}
 	case msg.EntityNode:
 		request.TargetEntity = msg.EntityNode
+		request.Group.BucketID = params.ByName(`bucketID`)
 		request.Group.MemberNodes = &[]proto.Node{
 			proto.Node{ID: params.ByName(`memberID`)},
 		}
