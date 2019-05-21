@@ -47,6 +47,7 @@ func groupConfigMemberAssign(c *cli.Context, childEntity string) error {
 	case proto.EntityGroup, proto.EntityCluster:
 		mandatoryOptions = append(mandatoryOptions, `in`)
 	case proto.EntityNode:
+
 	default:
 		return fmt.Errorf(
 			"Unknown child entity type in group membership assignment: %s",
@@ -239,7 +240,7 @@ func groupConfigMemberUnassign(c *cli.Context, childEntity string) error {
 			}
 		}
 	}
-	if groupID, err = adm.LookupGroupID(opts[`to`][0], bucketID); err != nil {
+	if groupID, err = adm.LookupGroupID(opts[`from`][0], bucketID); err != nil {
 		return err
 	}
 
