@@ -9,6 +9,7 @@
 package rest // import "github.com/mjolnir42/soma/internal/rest"
 
 import (
+	"crypto/tls"
 	"net/http"
 
 	"github.com/Sirupsen/logrus"
@@ -57,12 +58,10 @@ func (x *Rest) Run() {
 
 	// TODO switch to new abortable interface
 	if x.conf.Daemon.TLS {
-		x.errLog.Fatal(http.ListenAndServeTLS(
-			x.conf.Daemon.URL.Host,
-			x.conf.Daemon.Cert,
-			x.conf.Daemon.Key,
-			router,
-		))
+		server := &http.Server{Addr: x.conf.Daemon.URL.Host, Handler: router}
+		server.TLSConfig = &tls.Config{MaxVersion: tls.VersionTLS13, MinVersion: tls.VersionTLS10}
+		err := server.ListenAndServeTLS(x.conf.Daemon.Cert, x.conf.Daemon.Key)
+		x.errLog.Fatal(err)
 	} else {
 		x.errLog.Fatal(http.ListenAndServe(x.conf.Daemon.URL.Host, router))
 	}
