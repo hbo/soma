@@ -119,7 +119,7 @@ func registerGroups(app cli.App) *cli.App {
 										Name:         `custom`,
 										Usage:        `Update a custom property to a group`,
 										Description:  help.Text(`group-config::property-update`),
-										Action:       runtime(groupConfigPropertyCreateCustom),
+										Action:       runtime(groupConfigPropertyUpdateCustom),
 										BashComplete: cmpl.PropertyCreateIn,
 									},
 								},

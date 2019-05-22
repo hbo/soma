@@ -52,7 +52,6 @@ func (tk *TreeKeeper) txPropertyNew(a *tree.Action,
 	}
 
 	entity, entityID = getEntityData(a)
-
 	switch a.Property.Type {
 	case msg.PropertyCustom:
 		statement = stm[entity+"PropertyCustomCreate"]
@@ -209,6 +208,7 @@ func (tk *TreeKeeper) txPropertyUpdate(a *tree.Action,
 			a.Property.Inheritance,
 			a.Property.Custom.Value,
 		)
+		return err
 	case msg.PropertySystem:
 		statement = stm[entity+"PropertySystemUpdate"]
 		_, err = statement.Exec(
