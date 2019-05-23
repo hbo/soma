@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/mjolnir42/soma/lib/auth"
-	"gopkg.in/resty.v0"
+	"gopkg.in/resty.v1"
 )
 
 func KeyExchange(c *resty.Client) (*auth.Kex, error) {

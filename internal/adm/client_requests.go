@@ -10,7 +10,7 @@ import (
 
 	"github.com/codegangsta/cli"
 	"github.com/mjolnir42/soma/lib/proto"
-	"gopkg.in/resty.v0"
+	"gopkg.in/resty.v1"
 )
 
 // Exported functions

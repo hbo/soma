@@ -86,13 +86,7 @@ func verifyConfig(c *Config) error {
 		return errors.New("personalization is too large")
 	}
 	if c.Tree != nil {
-		if c.Tree.Fanout == 1 {
-			return errors.New("fanout of 1 is not allowed in tree mode")
-		}
-		if c.Tree.MaxDepth < 2 {
-			return errors.New("incorrect tree depth")
-		}
-		if c.Tree.InnerHashSize < 1 || c.Tree.InnerHashSize > Size {
+		if c.Tree.InnerHashSize > Size {
 			return errors.New("incorrect tree inner hash size")
 		}
 	}
@@ -152,7 +146,7 @@ func (d *digest) initialize(c *Config) {
 		d.isLastNode = true
 	}
 	// Process key.
-	if c.Key != nil {
+	if len(c.Key) > 0 {
 		copy(d.paddedKey[:], c.Key)
 		d.Write(d.paddedKey[:])
 		d.isKeyed = true

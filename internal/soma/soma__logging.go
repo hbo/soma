@@ -10,7 +10,7 @@ package soma
 import (
 	"fmt"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/mjolnir42/soma/internal/msg"
 )
 

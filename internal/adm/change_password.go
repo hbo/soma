@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/mjolnir42/soma/lib/auth"
-	"gopkg.in/resty.v0"
+	"gopkg.in/resty.v1"
 )
 
 func ChangeAccountPassword(c *resty.Client, r bool, a *auth.Token) (*auth.Token, error) {

@@ -8,7 +8,7 @@
 
 package tree
 
-import log "github.com/Sirupsen/logrus"
+import log "github.com/sirupsen/logrus"
 
 type Attacher interface {
 	Propertier

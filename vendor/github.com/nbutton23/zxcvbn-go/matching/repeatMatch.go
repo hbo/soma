@@ -1,10 +1,18 @@
 package matching
 
 import (
+	"strings"
+
 	"github.com/nbutton23/zxcvbn-go/entropy"
 	"github.com/nbutton23/zxcvbn-go/match"
-	"strings"
 )
+
+const repeatMatcherName = "REPEAT"
+
+//FilterRepeatMatcher can be pass to zxcvbn-go.PasswordStrength to skip that matcher
+func FilterRepeatMatcher(m match.Matcher) bool {
+	return m.ID == repeatMatcherName
+}
 
 func repeatMatch(password string) []match.Match {
 	var matches []match.Match

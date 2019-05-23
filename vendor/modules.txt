@@ -1,0 +1,70 @@
+# github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
+github.com/asaskevich/govalidator
+# github.com/boltdb/bolt v1.3.1
+github.com/boltdb/bolt
+# github.com/client9/reopen v1.0.0
+github.com/client9/reopen
+# github.com/codegangsta/cli v1.20.0
+github.com/codegangsta/cli
+# github.com/davecgh/go-spew v1.1.1
+github.com/davecgh/go-spew/spew
+# github.com/dchest/blake2b v1.0.0
+github.com/dchest/blake2b
+# github.com/julienschmidt/httprouter v1.2.0
+github.com/julienschmidt/httprouter
+# github.com/konsorten/go-windows-terminal-sequences v1.0.2
+github.com/konsorten/go-windows-terminal-sequences
+# github.com/lib/pq v1.1.1
+github.com/lib/pq
+github.com/lib/pq/oid
+github.com/lib/pq/scram
+# github.com/mattn/go-runewidth v0.0.3
+github.com/mattn/go-runewidth
+# github.com/mattn/go-shellwords v1.0.5
+github.com/mattn/go-shellwords
+# github.com/mitchellh/go-homedir v1.1.0
+github.com/mitchellh/go-homedir
+# github.com/mjolnir42/hash64 v0.0.0-20160424014505-16c60f1778a7
+github.com/mjolnir42/hash64
+# github.com/mjolnir42/scrypth64 v0.0.0-20160521124147-4c4328d165cb
+github.com/mjolnir42/scrypth64
+# github.com/nahanni/go-ucl v0.0.0-20161122070711-3788fcf0dad8
+github.com/nahanni/go-ucl
+# github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d
+github.com/nbutton23/zxcvbn-go
+github.com/nbutton23/zxcvbn-go/scoring
+github.com/nbutton23/zxcvbn-go/match
+github.com/nbutton23/zxcvbn-go/matching
+github.com/nbutton23/zxcvbn-go/utils/math
+github.com/nbutton23/zxcvbn-go/entropy
+github.com/nbutton23/zxcvbn-go/adjacency
+github.com/nbutton23/zxcvbn-go/frequency
+github.com/nbutton23/zxcvbn-go/data
+# github.com/peterh/liner v1.1.0
+github.com/peterh/liner
+# github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a
+github.com/rcrowley/go-metrics
+# github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b
+github.com/satori/go.uuid
+# github.com/sirupsen/logrus v1.4.2
+github.com/sirupsen/logrus
+# golang.org/x/crypto v0.0.0-20190513172903-22d7a77e9e5f
+golang.org/x/crypto/nacl/box
+golang.org/x/crypto/scrypt
+golang.org/x/crypto/curve25519
+golang.org/x/crypto/nacl/secretbox
+golang.org/x/crypto/salsa20/salsa
+golang.org/x/crypto/pbkdf2
+golang.org/x/crypto/internal/subtle
+golang.org/x/crypto/poly1305
+# golang.org/x/net v0.0.0-20190522155817-f3200d17e092
+golang.org/x/net/publicsuffix
+# golang.org/x/sys v0.0.0-20190523142557-0e01d883c5c5
+golang.org/x/sys/unix
+golang.org/x/sys/cpu
+# gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d
+gopkg.in/asn1-ber.v1
+# gopkg.in/ldap.v2 v2.5.1
+gopkg.in/ldap.v2
+# gopkg.in/resty.v1 v1.12.0
+gopkg.in/resty.v1

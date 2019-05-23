@@ -9,7 +9,7 @@ import (
 	"github.com/mjolnir42/soma/internal/adm"
 	"github.com/mjolnir42/soma/lib/auth"
 
-	"gopkg.in/resty.v0"
+	"gopkg.in/resty.v1"
 
 	"github.com/boltdb/bolt"
 	"github.com/codegangsta/cli"

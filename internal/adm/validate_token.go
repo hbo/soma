@@ -29,7 +29,7 @@ package adm
 import (
 	"fmt"
 
-	"gopkg.in/resty.v0"
+	"gopkg.in/resty.v1"
 )
 
 func ValidateToken(c *resty.Client, user, token string) error {

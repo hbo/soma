@@ -9,7 +9,7 @@
 package msg
 
 import (
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/mjolnir42/soma/lib/auth"
 	"github.com/mjolnir42/soma/lib/proto"
 )

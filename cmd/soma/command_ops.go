@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"gopkg.in/resty.v0"
+	"gopkg.in/resty.v1"
 
 	"github.com/codegangsta/cli"
 	"github.com/mjolnir42/soma/internal/adm"

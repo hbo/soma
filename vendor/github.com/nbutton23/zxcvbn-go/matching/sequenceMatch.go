@@ -1,10 +1,18 @@
 package matching
 
 import (
+	"strings"
+
 	"github.com/nbutton23/zxcvbn-go/entropy"
 	"github.com/nbutton23/zxcvbn-go/match"
-	"strings"
 )
+
+const sequenceMatcherName = "SEQ"
+
+//FilterSequenceMatcher can be pass to zxcvbn-go.PasswordStrength to skip that matcher
+func FilterSequenceMatcher(m match.Matcher) bool {
+	return m.ID == sequenceMatcherName
+}
 
 func sequenceMatch(password string) []match.Match {
 	var matches []match.Match
@@ -13,7 +21,7 @@ func sequenceMatch(password string) []match.Match {
 		var seq string
 		var seqName string
 		seqDirection := 0
-		for seqCandidateName, seqCandidate := range SEQUENCES {
+		for seqCandidateName, seqCandidate := range sequences {
 			iN := strings.Index(seqCandidate, string(password[i]))
 			var jN int
 			if j < len(password) {
@@ -57,7 +65,7 @@ func sequenceMatch(password string) []match.Match {
 					}
 					break
 				} else {
-					j += 1
+					j++
 				}
 
 			}

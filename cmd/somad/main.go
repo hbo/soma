@@ -11,7 +11,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/asaskevich/govalidator"
 	"github.com/client9/reopen"
 	"github.com/mjolnir42/soma/internal/config"
@@ -20,6 +19,7 @@ import (
 	"github.com/mjolnir42/soma/internal/soma"
 	"github.com/mjolnir42/soma/internal/super"
 	metrics "github.com/rcrowley/go-metrics"
+	"github.com/sirupsen/logrus"
 )
 
 // global variables

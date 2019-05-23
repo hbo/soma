@@ -18,7 +18,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/mjolnir42/soma/lib/proto"
-	resty "gopkg.in/resty.v0"
+	resty "gopkg.in/resty.v1"
 )
 
 // ValidateRuneCount tests if a string's number of unicode runes is

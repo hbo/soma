@@ -10,7 +10,7 @@ package handler // import "github.com/mjolnir42/soma/internal/handler"
 import (
 	"database/sql"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/mjolnir42/soma/internal/msg"
 )
 

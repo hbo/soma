@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/mjolnir42/soma/lib/auth"
-	"gopkg.in/resty.v0"
+	"gopkg.in/resty.v1"
 )
 
 func ActivateAccount(c *resty.Client, a *auth.Token) (*auth.Token, error) {

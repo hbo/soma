@@ -37,7 +37,7 @@ indicated in its respective LICENSE file. Please consult these files for
 the full license text.
 Thank you to all individuals involved in those projects.
 
-github.com/Sirupsen/logrus: MIT License
+github.com/sirupsen/logrus: MIT License
   Copyright (c) 2014 Simon Eskildsen
 
 github.com/asaskevich/govalidator: MIT License
@@ -115,6 +115,6 @@ gopkg.in/asn1-ber.v1: 3-clause BSD
 gopkg.in/ldap.v2: 3-clause BSD
   Copyright (c) 2012 The Go Authors
 
-gopkg.in/resty.v0: MIT License
+gopkg.in/resty.v1: MIT License
   Copyright (c) 2015-2016 Jeevanandam M
 

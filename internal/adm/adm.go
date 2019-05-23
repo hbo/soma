@@ -3,7 +3,7 @@ package adm
 import (
 	"github.com/mjolnir42/soma/internal/db"
 
-	"gopkg.in/resty.v0"
+	"gopkg.in/resty.v1"
 )
 
 var (

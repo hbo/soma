@@ -15,7 +15,7 @@ import (
 	"strings"
 
 	"github.com/mjolnir42/soma/lib/proto"
-	resty "gopkg.in/resty.v0"
+	resty "gopkg.in/resty.v1"
 )
 
 // LookupOncallID looks up the UUID for an oncall duty on the

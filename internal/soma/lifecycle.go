@@ -13,12 +13,12 @@ import (
 	"math"
 	"time"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/mjolnir42/soma/internal/handler"
 	"github.com/mjolnir42/soma/internal/msg"
 	"github.com/mjolnir42/soma/internal/stmt"
 	"github.com/mjolnir42/soma/lib/proto"
-	"gopkg.in/resty.v0"
+	"gopkg.in/resty.v1"
 )
 
 // LifeCycle handles the check rollout workflow
