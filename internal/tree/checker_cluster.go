@@ -95,6 +95,8 @@ func (tec *Cluster) deleteCheckInherited(c Check) {
 }
 
 func (tec *Cluster) deleteCheckAllInherited() {
+	tec.lock.Lock()
+	defer tec.lock.Unlock()
 	for _, check := range tec.Checks {
 		if check.GetIsInherited() {
 			tec.deleteCheckInherited(check.Clone())
@@ -126,6 +128,8 @@ func (tec *Cluster) deleteCheckOnChildren(c Check) {
 }
 
 func (tec *Cluster) deleteCheckLocalAll() {
+	tec.lock.Lock()
+	defer tec.lock.Unlock()
 	localChecks := make(chan *Check, len(tec.Checks)+1)
 
 	for _, check := range tec.Checks {

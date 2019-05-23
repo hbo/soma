@@ -30,6 +30,8 @@ func (tec *Cluster) unlinkNode(u UnlinkRequest) {
 	if unlinkRequestCheck(u, tec) {
 		switch u.ChildType {
 		case "node":
+			tec.lock.Lock()
+			defer tec.lock.Unlock()
 			if _, ok := tec.Children[u.ChildID]; ok {
 				if u.ChildName == tec.Children[u.ChildID].GetName() {
 					a := Action{

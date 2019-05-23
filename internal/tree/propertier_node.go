@@ -288,6 +288,8 @@ func (ten *Node) deletePropertyOnChildren(p Property) {
 }
 
 func (ten *Node) deletePropertyAllInherited() {
+	ten.lock.Lock()
+	defer ten.lock.Unlock()
 	for _, p := range ten.PropertyCustom {
 		if !p.GetIsInherited() {
 			continue
@@ -315,6 +317,8 @@ func (ten *Node) deletePropertyAllInherited() {
 }
 
 func (ten *Node) deletePropertyAllLocal() {
+	ten.lock.Lock()
+	defer ten.lock.Unlock()
 	for _, p := range ten.PropertyCustom {
 		if p.GetIsInherited() {
 			continue

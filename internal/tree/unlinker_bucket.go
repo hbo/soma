@@ -24,6 +24,7 @@ func (teb *Bucket) Unlink(u UnlinkRequest) {
 		}
 		return
 	}
+	teb.lock.RLock()
 loop:
 	for child := range teb.Children {
 		if teb.Children[child].(Builder).GetType() == "node" {
@@ -31,6 +32,7 @@ loop:
 		}
 		teb.Children[child].(Unlinker).Unlink(u)
 	}
+	teb.lock.RUnlock()
 }
 
 //
@@ -39,9 +41,12 @@ func (teb *Bucket) unlinkGroup(u UnlinkRequest) {
 	if unlinkRequestCheck(u, teb) {
 		switch u.ChildType {
 		case "group":
+			teb.lock.Lock()
+			defer teb.lock.Unlock()
 			if _, ok := teb.Children[u.ChildID]; ok {
 				if u.ChildName == teb.Children[u.ChildID].GetName() {
 					teb.Children[u.ChildID].clearParent()
+
 					delete(teb.Children, u.ChildID)
 					for i, grp := range teb.ordChildrenGrp {
 						if grp == u.ChildID {
@@ -64,6 +69,8 @@ func (teb *Bucket) unlinkCluster(u UnlinkRequest) {
 	if unlinkRequestCheck(u, teb) {
 		switch u.ChildType {
 		case "cluster":
+			teb.lock.Lock()
+			defer teb.lock.Unlock()
 			if _, ok := teb.Children[u.ChildID]; ok {
 				if u.ChildName == teb.Children[u.ChildID].GetName() {
 					teb.Children[u.ChildID].clearParent()
@@ -73,6 +80,7 @@ func (teb *Bucket) unlinkCluster(u UnlinkRequest) {
 							delete(teb.ordChildrenClr, i)
 						}
 					}
+
 				}
 			}
 		default:
@@ -89,6 +97,8 @@ func (teb *Bucket) unlinkNode(u UnlinkRequest) {
 	if unlinkRequestCheck(u, teb) {
 		switch u.ChildType {
 		case "node":
+			teb.lock.Lock()
+			defer teb.lock.Unlock()
 			if _, ok := teb.Children[u.ChildID]; ok {
 				if u.ChildName == teb.Children[u.ChildID].GetName() {
 					teb.Children[u.ChildID].clearParent()

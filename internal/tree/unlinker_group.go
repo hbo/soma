@@ -24,6 +24,7 @@ func (teg *Group) Unlink(u UnlinkRequest) {
 		}
 		return
 	}
+	teg.lock.RLock()
 loop:
 	for child := range teg.Children {
 		if teg.Children[child].(Builder).GetType() == "node" {
@@ -31,6 +32,7 @@ loop:
 		}
 		teg.Children[child].(Unlinker).Unlink(u)
 	}
+	teg.lock.RUnlock()
 }
 
 //
@@ -39,6 +41,8 @@ func (teg *Group) unlinkGroup(u UnlinkRequest) {
 	if unlinkRequestCheck(u, teg) {
 		switch u.ChildType {
 		case "group":
+			teg.lock.Lock()
+			defer teg.lock.Unlock()
 			if _, ok := teg.Children[u.ChildID]; ok {
 				if u.ChildName == teg.Children[u.ChildID].GetName() {
 					a := Action{
@@ -71,6 +75,8 @@ func (teg *Group) unlinkCluster(u UnlinkRequest) {
 	if unlinkRequestCheck(u, teg) {
 		switch u.ChildType {
 		case "cluster":
+			teg.lock.Lock()
+			defer teg.lock.Unlock()
 			if _, ok := teg.Children[u.ChildID]; ok {
 				if u.ChildName == teg.Children[u.ChildID].GetName() {
 					a := Action{
@@ -103,6 +109,8 @@ func (teg *Group) unlinkNode(u UnlinkRequest) {
 	if unlinkRequestCheck(u, teg) {
 		switch u.ChildType {
 		case "node":
+			teg.lock.Lock()
+			defer teg.lock.Unlock()
 			if _, ok := teg.Children[u.ChildID]; ok {
 				if u.ChildName == teg.Children[u.ChildID].GetName() {
 					a := Action{

@@ -340,6 +340,8 @@ func (ter *Repository) deletePropertyOnChildren(p Property) {
 }
 
 func (ter *Repository) deletePropertyAllInherited() {
+	ter.lock.Lock()
+	defer ter.lock.Unlock()
 	for _, p := range ter.PropertyCustom {
 		if !p.GetIsInherited() {
 			continue
@@ -367,6 +369,8 @@ func (ter *Repository) deletePropertyAllInherited() {
 }
 
 func (ter *Repository) deletePropertyAllLocal() {
+	ter.lock.Lock()
+	defer ter.lock.Unlock()
 	for _, p := range ter.PropertyCustom {
 		if p.GetIsInherited() {
 			continue

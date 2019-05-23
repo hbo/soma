@@ -21,9 +21,11 @@ func (ter *Repository) Unlink(u UnlinkRequest) {
 		}
 		return
 	}
+	ter.lock.RLock()
 	for child := range ter.Children {
 		ter.Children[child].(Unlinker).Unlink(u)
 	}
+	ter.lock.RUnlock()
 }
 
 // Interface: BucketUnlinker
@@ -31,6 +33,8 @@ func (ter *Repository) unlinkBucket(u UnlinkRequest) {
 	if unlinkRequestCheck(u, ter) {
 		switch u.ChildType {
 		case "bucket":
+			ter.lock.Lock()
+			defer ter.lock.Unlock()
 			if _, ok := ter.Children[u.ChildID]; ok {
 				if u.ChildName == ter.Children[u.ChildID].GetName() {
 					ter.Children[u.ChildID].clearParent()

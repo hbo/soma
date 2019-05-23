@@ -26,6 +26,7 @@ func (teb *Bucket) Receive(r ReceiveRequest) {
 		}
 		return
 	}
+	teb.lock.RLock()
 loop:
 	for child := range teb.Children {
 		if teb.Children[child].(Builder).GetType() == "node" {
@@ -33,11 +34,14 @@ loop:
 		}
 		teb.Children[child].(Receiver).Receive(r)
 	}
+	teb.lock.RUnlock()
 }
 
 //
 // Interface: GroupReceiver
 func (teb *Bucket) receiveGroup(r ReceiveRequest) {
+	teb.lock.Lock()
+	defer teb.lock.Unlock()
 	if receiveRequestCheck(r, teb) {
 		switch r.ChildType {
 		case "group":
@@ -59,6 +63,8 @@ func (teb *Bucket) receiveGroup(r ReceiveRequest) {
 //
 // Interface: ClusterReceiver
 func (teb *Bucket) receiveCluster(r ReceiveRequest) {
+	teb.lock.Lock()
+	defer teb.lock.Unlock()
 	if receiveRequestCheck(r, teb) {
 		switch r.ChildType {
 		case "cluster":
@@ -80,6 +86,8 @@ func (teb *Bucket) receiveCluster(r ReceiveRequest) {
 //
 // Interface: NodeReceiver
 func (teb *Bucket) receiveNode(r ReceiveRequest) {
+	teb.lock.Lock()
+	defer teb.lock.Unlock()
 	if receiveRequestCheck(r, teb) {
 		switch r.ChildType {
 		case "node":

@@ -117,6 +117,7 @@ func (g *Group) getServiceMap(serviceID string) map[string][]string {
 }
 
 func (g *Group) updateCheckInstances() {
+	g.lock.RLock()
 	// object may have no checks, but there could be instances to mop up
 	if len(g.Checks) == 0 && len(g.Instances) == 0 {
 		g.log.Printf("TK[%s]: Action=%s, ObjectType=%s, ObjectID=%s, HasChecks=%t",
@@ -128,6 +129,7 @@ func (g *Group) updateCheckInstances() {
 		)
 		// found nothing to do, ensure update flag is unset again
 		g.hasUpdate = false
+		g.lock.RUnlock()
 		return
 	}
 
@@ -137,7 +139,7 @@ func (g *Group) updateCheckInstances() {
 	if len(g.loadedInstances) > 0 {
 		startup = true
 	}
-
+	g.lock.RUnlock()
 	// if this is not the startupLoad and there are no updates, then there
 	// is noting to do
 	if !startup && !g.hasUpdate {
@@ -232,6 +234,7 @@ func (g *Group) removeDisabledCheckInstances() {
 
 func (g *Group) calculateCheckInstances(startup bool) {
 	wg := sync.WaitGroup{}
+	g.lock.RLock()
 	for i := range g.Checks {
 		wg.Add(1)
 		go func(name string) {
@@ -239,6 +242,7 @@ func (g *Group) calculateCheckInstances(startup bool) {
 			g.processCheckForUpdates(name, startup)
 		}(i)
 	}
+	g.lock.RUnlock()
 	wg.Wait()
 
 	// completed the pass, reset update flag
@@ -323,9 +327,10 @@ func (g *Group) processCheckForUpdates(chkName string, startup bool) {
 	}
 
 	g.createNewCheckInstances(ctx)
-
+	g.lock.Lock()
 	delete(g.CheckInstances, ctx.uuid)
 	g.CheckInstances[ctx.uuid] = ctx.newCheckInstances
+	g.lock.Unlock()
 }
 
 func (g *Group) constraintCheck(ctx *checkContext) {

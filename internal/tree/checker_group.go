@@ -102,6 +102,8 @@ func (teg *Group) DeleteCheck(c Check) {
 }
 
 func (teg *Group) deleteCheckAllInherited() {
+	teg.lock.Lock()
+	defer teg.lock.Unlock()
 	for _, check := range teg.Checks {
 		if check.GetIsInherited() {
 			teg.deleteCheckInherited(check.Clone())
@@ -151,6 +153,8 @@ func (teg *Group) deleteCheckOnChildren(c Check) {
 }
 
 func (teg *Group) deleteCheckLocalAll() {
+	teg.lock.Lock()
+	defer teg.lock.Unlock()
 	localChecks := make(chan *Check, len(teg.Checks)+1)
 
 	for _, check := range teg.Checks {

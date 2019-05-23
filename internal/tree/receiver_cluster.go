@@ -27,6 +27,8 @@ func (tec *Cluster) Receive(r ReceiveRequest) {
 //
 // Interface: NodeReceiver
 func (tec *Cluster) receiveNode(r ReceiveRequest) {
+	tec.lock.Lock()
+	defer tec.lock.Unlock()
 	if receiveRequestCheck(r, tec) {
 		switch r.ChildType {
 		case "node":

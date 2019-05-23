@@ -12,6 +12,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/davecgh/go-spew/spew"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -40,12 +41,15 @@ func (ter *Repository) Destroy() {
 		panic(`Repository.Destroy called without Parent to unlink from`)
 	}
 	// call before unlink since it requires tec.Parent.*
+	spew.Dump("Repo destroy")
 	ter.actionDelete()
 	ter.deletePropertyAllLocal()
 	ter.deletePropertyAllInherited()
 	ter.deleteCheckLocalAll()
 
 	wg := new(sync.WaitGroup)
+	ter.lock.RLock()
+	spew.Dump("Repo delete props + checks done")
 	for child := range ter.Children {
 		wg.Add(1)
 		go func(c string) {
@@ -53,8 +57,10 @@ func (ter *Repository) Destroy() {
 			ter.Children[c].Destroy()
 		}(child)
 	}
+	ter.lock.RUnlock()
 	wg.Wait()
 
+	spew.Dump("Repo delete w.Wait is done")
 	// the Destroy handler of Fault calls
 	// updateFaultRecursive(nil) on us
 	ter.Fault.Destroy()
@@ -68,7 +74,7 @@ func (ter *Repository) Destroy() {
 		ChildID:    ter.GetID(),
 	},
 	)
-
+	spew.Dump("Repo unlink done")
 	ter.setAction(nil)
 }
 
@@ -77,6 +83,8 @@ func (ter *Repository) Detach() {
 }
 
 func (ter *Repository) SetName(newRepoName string) {
+	ter.lock.RLock()
+	defer ter.lock.RUnlock()
 	for i := range ter.Children {
 		newBucketName := strings.Replace(
 			ter.Children[i].GetName(),
@@ -93,6 +101,8 @@ func (ter *Repository) SetName(newRepoName string) {
 
 func (ter *Repository) SetTeamID(newTeamID string) {
 	wg := sync.WaitGroup{}
+	ter.lock.RLock()
+	defer ter.lock.RUnlock()
 	switch deterministicInheritanceOrder {
 	case true:
 		// buckets

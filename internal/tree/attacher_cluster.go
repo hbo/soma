@@ -83,6 +83,7 @@ func (tec *Cluster) Destroy() {
 	tec.updateCheckInstances()
 
 	wg := new(sync.WaitGroup)
+	tec.lock.RLock()
 	for child := range tec.Children {
 		wg.Add(1)
 		go func(c string) {
@@ -90,6 +91,7 @@ func (tec *Cluster) Destroy() {
 			tec.Children[c].Destroy()
 		}(child)
 	}
+	tec.lock.RUnlock()
 	wg.Wait()
 
 	tec.Parent.Unlink(UnlinkRequest{

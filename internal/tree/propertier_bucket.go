@@ -11,6 +11,7 @@ package tree
 import (
 	"sync"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/mjolnir42/soma/internal/msg"
 	"github.com/satori/go.uuid"
 )
@@ -131,7 +132,9 @@ func (teb *Bucket) setPropertyOnChildren(p Property) {
 		wg.Add(1)
 		go func(stp Property, c string) {
 			defer wg.Done()
+			teb.lock.RLock()
 			teb.Children[c].setPropertyInherited(stp)
+			teb.lock.RUnlock()
 		}(p, child)
 	}
 	wg.Wait()
@@ -194,7 +197,9 @@ func (teb *Bucket) updatePropertyOnChildren(p Property) {
 		wg.Add(1)
 		go func(stp Property, c string) {
 			defer wg.Done()
+			teb.lock.RLock()
 			teb.Children[c].updatePropertyInherited(stp)
+			teb.lock.RUnlock()
 		}(p, child)
 	}
 	wg.Wait()
@@ -381,6 +386,8 @@ func (teb *Bucket) deletePropertyOnChildren(p Property) {
 }
 
 func (teb *Bucket) deletePropertyAllInherited() {
+	teb.lock.Lock()
+	defer teb.lock.Unlock()
 	for _, p := range teb.PropertyCustom {
 		if !p.GetIsInherited() {
 			continue
@@ -408,6 +415,9 @@ func (teb *Bucket) deletePropertyAllInherited() {
 }
 
 func (teb *Bucket) deletePropertyAllLocal() {
+	teb.lock.Lock()
+	spew.Dump("bucket deletePropertyAllLocal got lock")
+	defer teb.lock.Unlock()
 	for _, p := range teb.PropertyCustom {
 		if p.GetIsInherited() {
 			continue

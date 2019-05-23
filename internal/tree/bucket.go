@@ -43,6 +43,7 @@ type Bucket struct {
 	ordChildrenClr  map[int]string
 	ordChildrenNod  map[int]string
 	log             *log.Logger
+	lock            *sync.RWMutex
 }
 
 type BucketSpec struct {
@@ -86,6 +87,7 @@ func NewBucket(spec BucketSpec) *Bucket {
 	teb.ordChildrenGrp = make(map[int]string)
 	teb.ordChildrenClr = make(map[int]string)
 	teb.ordChildrenNod = make(map[int]string)
+	teb.lock = &sync.RWMutex{}
 
 	return teb
 }

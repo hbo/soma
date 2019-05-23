@@ -383,6 +383,8 @@ func (tec *Cluster) deletePropertyOnChildren(p Property) {
 }
 
 func (tec *Cluster) deletePropertyAllInherited() {
+	tec.lock.Lock()
+	defer tec.lock.Unlock()
 	for _, p := range tec.PropertyCustom {
 		if !p.GetIsInherited() {
 			continue
@@ -410,6 +412,8 @@ func (tec *Cluster) deletePropertyAllInherited() {
 }
 
 func (tec *Cluster) deletePropertyAllLocal() {
+	tec.lock.Lock()
+	defer tec.lock.Unlock()
 	for _, p := range tec.PropertyCustom {
 		if p.GetIsInherited() {
 			continue

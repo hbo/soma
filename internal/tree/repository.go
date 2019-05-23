@@ -38,6 +38,7 @@ type Repository struct {
 	ordNumChildBck  int
 	ordChildrenBck  map[int]string
 	log             *log.Logger
+	lock            *sync.RWMutex
 }
 
 type RepositorySpec struct {
@@ -73,6 +74,7 @@ func NewRepository(spec RepositorySpec) *Repository {
 	ter.Checks = make(map[string]Check)
 	ter.ordNumChildBck = 0
 	ter.ordChildrenBck = make(map[int]string)
+	ter.lock = &sync.RWMutex{}
 
 	// return new repository with attached fault handler
 	newFault().Attach(

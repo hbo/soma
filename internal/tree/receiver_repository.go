@@ -21,13 +21,17 @@ func (ter *Repository) Receive(r ReceiveRequest) {
 		}
 		return
 	}
+	ter.lock.RLock()
 	for child := range ter.Children {
 		ter.Children[child].(Receiver).Receive(r)
 	}
+	ter.lock.RUnlock()
 }
 
 // Interface: BucketReceiver
 func (ter *Repository) receiveBucket(r ReceiveRequest) {
+	ter.lock.Lock()
+	defer ter.lock.Unlock()
 	if receiveRequestCheck(r, ter) {
 		switch r.ChildType {
 		case "bucket":

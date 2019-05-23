@@ -24,6 +24,7 @@ func (teg *Group) Receive(r ReceiveRequest) {
 		}
 		return
 	}
+	teg.lock.RLock()
 loop:
 	for child := range teg.Children {
 		if teg.Children[child].(Builder).GetType() == "node" {
@@ -31,11 +32,14 @@ loop:
 		}
 		teg.Children[child].(Receiver).Receive(r)
 	}
+	teg.lock.RUnlock()
 }
 
 //
 // Interface: GroupReceiver
 func (teg *Group) receiveGroup(r ReceiveRequest) {
+	teg.lock.Lock()
+	defer teg.lock.Unlock()
 	if receiveRequestCheck(r, teg) {
 		switch r.ChildType {
 		case "group":
@@ -62,6 +66,8 @@ func (teg *Group) receiveGroup(r ReceiveRequest) {
 //
 // Interface: ClusterReceiver
 func (teg *Group) receiveCluster(r ReceiveRequest) {
+	teg.lock.Lock()
+	defer teg.lock.Unlock()
 	if receiveRequestCheck(r, teg) {
 		switch r.ChildType {
 		case "cluster":
@@ -88,6 +94,8 @@ func (teg *Group) receiveCluster(r ReceiveRequest) {
 //
 // Interface: NodeReceiver
 func (teg *Group) receiveNode(r ReceiveRequest) {
+	teg.lock.Lock()
+	defer teg.lock.Unlock()
 	if receiveRequestCheck(r, teg) {
 		switch r.ChildType {
 		case "node":

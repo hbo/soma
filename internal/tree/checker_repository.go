@@ -115,6 +115,8 @@ func (ter *Repository) deleteCheckOnChildren(c Check) {
 }
 
 func (ter *Repository) deleteCheckLocalAll() {
+	ter.lock.Lock()
+	defer ter.lock.Unlock()
 	localChecks := make(chan *Check, len(ter.Checks)+1)
 
 	for _, check := range ter.Checks {

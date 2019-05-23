@@ -82,6 +82,7 @@ func (teg *Group) Destroy() {
 	teg.updateCheckInstances()
 
 	wg := new(sync.WaitGroup)
+	teg.lock.RLock()
 	for child := range teg.Children {
 		wg.Add(1)
 		go func(c string) {
@@ -89,6 +90,7 @@ func (teg *Group) Destroy() {
 			teg.Children[c].Destroy()
 		}(child)
 	}
+	teg.lock.RUnlock()
 	wg.Wait()
 
 	teg.Parent.Unlink(UnlinkRequest{
@@ -114,7 +116,6 @@ func (teg *Group) Detach() {
 	teg.deletePropertyAllInherited()
 	teg.deleteCheckAllInherited()
 	teg.updateCheckInstances()
-	// TODO delete all inherited checks + check instances
 
 	teg.Parent.Unlink(UnlinkRequest{
 		ParentType: teg.Parent.(Builder).GetType(),

@@ -383,6 +383,8 @@ func (teg *Group) deletePropertyOnChildren(p Property) {
 }
 
 func (teg *Group) deletePropertyAllInherited() {
+	teg.lock.Lock()
+	defer teg.lock.Unlock()
 	for _, p := range teg.PropertyCustom {
 		if !p.GetIsInherited() {
 			continue
@@ -410,6 +412,8 @@ func (teg *Group) deletePropertyAllInherited() {
 }
 
 func (teg *Group) deletePropertyAllLocal() {
+	teg.lock.Lock()
+	defer teg.lock.Unlock()
 	for _, p := range teg.PropertyCustom {
 		if p.GetIsInherited() {
 			continue

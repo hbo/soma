@@ -101,6 +101,8 @@ func (teb *Bucket) DeleteCheck(c Check) {
 }
 
 func (teb *Bucket) deleteCheckAllInherited() {
+	teb.lock.Lock()
+	defer teb.lock.Unlock()
 	for _, check := range teb.Checks {
 		if check.GetIsInherited() {
 			teb.deleteCheckInherited(check.Clone())
@@ -151,6 +153,8 @@ func (teb *Bucket) deleteCheckOnChildren(c Check) {
 }
 
 func (teb *Bucket) deleteCheckLocalAll() {
+	teb.lock.Lock()
+	defer teb.lock.Unlock()
 	localChecks := make(chan *Check, len(teb.Checks)+1)
 
 	for _, check := range teb.Checks {

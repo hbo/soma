@@ -58,6 +58,8 @@ func (ten *Node) DeleteCheck(c Check) {
 }
 
 func (ten *Node) deleteCheckAllInherited() {
+	ten.lock.Lock()
+	defer ten.lock.Unlock()
 	for _, check := range ten.Checks {
 		if check.GetIsInherited() {
 			ten.deleteCheckInherited(check.Clone())
@@ -75,6 +77,8 @@ func (ten *Node) deleteCheckOnChildren(c Check) {
 }
 
 func (ten *Node) deleteCheckLocalAll() {
+	ten.lock.Lock()
+	defer ten.lock.Unlock()
 	localChecks := make(chan *Check, len(ten.Checks)+1)
 
 	for _, check := range ten.Checks {
