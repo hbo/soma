@@ -183,6 +183,7 @@ func (teb Bucket) CloneRepository() RepositoryAttacher {
 		ordNumChildClr: teb.ordNumChildClr,
 		ordNumChildNod: teb.ordNumChildNod,
 		log:            teb.log,
+		lock:           &sync.RWMutex{},
 	}
 	cl.ID, _ = uuid.FromString(teb.ID.String())
 	cl.Team, _ = uuid.FromString(teb.Team.String())

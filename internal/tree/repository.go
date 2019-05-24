@@ -98,6 +98,7 @@ func (ter Repository) Clone() Repository {
 		State:          ter.State,
 		ordNumChildBck: ter.ordNumChildBck,
 		log:            ter.log,
+		lock:           &sync.RWMutex{},
 	}
 	cl.ID, _ = uuid.FromString(ter.ID.String())
 	cl.Team, _ = uuid.FromString(ter.Team.String())
