@@ -13,9 +13,9 @@ import (
 	"reflect"
 	"sync"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/mjolnir42/soma/lib/proto"
 	uuid "github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 type Group struct {
@@ -89,6 +89,8 @@ func NewGroup(spec GroupSpec) *Group {
 }
 
 func (teg Group) Clone() *Group {
+	teg.lock.RLock()
+	defer teg.lock.RUnlock()
 	cl := Group{
 		Name:           teg.Name,
 		State:          teg.State,

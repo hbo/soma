@@ -82,17 +82,11 @@ func (tec *Cluster) Destroy() {
 	tec.deleteCheckAllInherited()
 	tec.updateCheckInstances()
 
-	wg := new(sync.WaitGroup)
-	tec.lock.RLock()
-	for child := range tec.Children {
-		wg.Add(1)
-		go func(c string) {
-			defer wg.Done()
-			tec.Children[c].Destroy()
-		}(child)
+	clone := tec.Clone()
+	for c := range clone.Children {
+		tec.Children[c].Destroy()
+
 	}
-	tec.lock.RUnlock()
-	wg.Wait()
 
 	tec.Parent.Unlink(UnlinkRequest{
 		ParentType: tec.Parent.(Builder).GetType(),

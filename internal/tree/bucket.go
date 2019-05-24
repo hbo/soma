@@ -12,9 +12,9 @@ import (
 	"fmt"
 	"sync"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/mjolnir42/soma/lib/proto"
 	uuid "github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 type Bucket struct {
@@ -90,6 +90,85 @@ func NewBucket(spec BucketSpec) *Bucket {
 	teb.lock = &sync.RWMutex{}
 
 	return teb
+}
+
+func (teb Bucket) Clone() Bucket {
+	teb.lock.RLock()
+	defer teb.lock.RUnlock()
+	cl := Bucket{
+		Name:           teb.Name,
+		Deleted:        teb.Deleted,
+		Frozen:         teb.Frozen,
+		Type:           teb.Type,
+		State:          teb.State,
+		Environment:    teb.Environment,
+		Repository:     teb.Repository,
+		Parent:         teb.Parent,
+		ordNumChildGrp: teb.ordNumChildGrp,
+		ordNumChildClr: teb.ordNumChildClr,
+		ordNumChildNod: teb.ordNumChildNod,
+		log:            teb.log,
+		lock:           &sync.RWMutex{},
+	}
+
+	cl.ID, _ = uuid.FromString(teb.ID.String())
+	cl.Team, _ = uuid.FromString(teb.Team.String())
+
+	f := make(map[string]BucketAttacher)
+	for k, child := range teb.Children {
+		f[k] = child.CloneBucket()
+	}
+	cl.Children = f
+
+	pO := make(map[string]Property)
+	for k, prop := range teb.PropertyOncall {
+		pO[k] = prop.Clone()
+	}
+	cl.PropertyOncall = pO
+
+	pSv := make(map[string]Property)
+	for k, prop := range teb.PropertyService {
+		pSv[k] = prop.Clone()
+	}
+	cl.PropertyService = pSv
+
+	pSy := make(map[string]Property)
+	for k, prop := range teb.PropertySystem {
+		pSy[k] = prop.Clone()
+	}
+	cl.PropertySystem = pSy
+
+	pC := make(map[string]Property)
+	for k, prop := range teb.PropertyCustom {
+		pC[k] = prop.Clone()
+	}
+	cl.PropertyCustom = pC
+
+	cK := make(map[string]Check)
+	for k, chk := range teb.Checks {
+		cK[k] = chk.Clone()
+	}
+	cl.Checks = cK
+
+	chLG := make(map[int]string)
+	for i, s := range teb.ordChildrenGrp {
+		chLG[i] = s
+	}
+	cl.ordChildrenGrp = chLG
+
+	chLC := make(map[int]string)
+	for i, s := range teb.ordChildrenClr {
+		chLC[i] = s
+	}
+	cl.ordChildrenClr = chLC
+
+	chLN := make(map[int]string)
+	for i, s := range teb.ordChildrenNod {
+		chLN[i] = s
+	}
+	cl.ordChildrenNod = chLN
+
+	return cl
 }
 
 func (teb Bucket) CloneRepository() RepositoryAttacher {

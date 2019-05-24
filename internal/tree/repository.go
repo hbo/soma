@@ -13,9 +13,9 @@ import (
 	"reflect"
 	"sync"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/mjolnir42/soma/lib/proto"
 	uuid "github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 type Repository struct {
@@ -88,6 +88,8 @@ func NewRepository(spec RepositorySpec) *Repository {
 }
 
 func (ter Repository) Clone() Repository {
+	ter.lock.RLock()
+	defer ter.lock.RUnlock()
 	cl := Repository{
 		Name:           ter.Name,
 		Deleted:        ter.Deleted,

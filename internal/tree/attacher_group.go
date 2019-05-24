@@ -81,17 +81,10 @@ func (teg *Group) Destroy() {
 	teg.deleteCheckAllInherited()
 	teg.updateCheckInstances()
 
-	wg := new(sync.WaitGroup)
-	teg.lock.RLock()
-	for child := range teg.Children {
-		wg.Add(1)
-		go func(c string) {
-			defer wg.Done()
-			teg.Children[c].Destroy()
-		}(child)
+	clone := teg.Clone()
+	for c := range clone.Children {
+		teg.Children[c].Destroy()
 	}
-	teg.lock.RUnlock()
-	wg.Wait()
 
 	teg.Parent.Unlink(UnlinkRequest{
 		ParentType: teg.Parent.(Builder).GetType(),

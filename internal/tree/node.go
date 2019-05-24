@@ -13,9 +13,9 @@ import (
 	"reflect"
 	"sync"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/mjolnir42/soma/lib/proto"
 	uuid "github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 type Node struct {
@@ -87,6 +87,8 @@ func NewNode(spec NodeSpec) *Node {
 }
 
 func (ten Node) Clone() *Node {
+	ten.lock.RLock()
+	defer ten.lock.RUnlock()
 	cl := Node{
 		Name:    ten.Name,
 		State:   ten.State,

@@ -13,7 +13,6 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/davecgh/go-spew/spew"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -38,27 +37,17 @@ func (teb *Bucket) Destroy() {
 	if teb.Parent == nil {
 		panic(`Bucket.Destroy called without Parent to unlink from`)
 	}
-	spew.Dump("Bucket deletePropertyAllLocal")
+
 	teb.deletePropertyAllLocal()
-	spew.Dump("Bucket deletePropertyAllInherited")
 	teb.deletePropertyAllInherited()
-	spew.Dump("Bucket deleteCheckLocalAll")
 	teb.deleteCheckLocalAll()
-	spew.Dump("Bucket deleteCheckAllInherited")
 	teb.deleteCheckAllInherited()
-	wg := new(sync.WaitGroup)
-	teb.lock.RLock()
-	spew.Dump("Bucket destroy props done")
-	for child := range teb.Children {
-		wg.Add(1)
-		go func(c string) {
-			defer wg.Done()
-			teb.Children[c].Destroy()
-		}(child)
+
+	clone := teb.Clone()
+	for c := range clone.Children {
+		teb.Children[c].Destroy()
 	}
-	teb.lock.RUnlock()
-	wg.Wait()
-	spew.Dump("Bucket destroy children started")
+
 	teb.Parent.Unlink(UnlinkRequest{
 		ParentType: teb.Parent.(Builder).GetType(),
 		ParentID:   teb.Parent.(Builder).GetID(),
@@ -68,7 +57,7 @@ func (teb *Bucket) Destroy() {
 		ChildID:    teb.GetID(),
 	},
 	)
-	spew.Dump("Bucket unlinked")
+
 	teb.setFault(nil)
 	teb.actionDelete()
 	teb.setAction(nil)

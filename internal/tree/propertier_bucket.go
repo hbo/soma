@@ -11,7 +11,6 @@ package tree
 import (
 	"sync"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/mjolnir42/soma/internal/msg"
 	"github.com/satori/go.uuid"
 )
@@ -416,7 +415,6 @@ func (teb *Bucket) deletePropertyAllInherited() {
 
 func (teb *Bucket) deletePropertyAllLocal() {
 	teb.lock.Lock()
-	spew.Dump("bucket deletePropertyAllLocal got lock")
 	defer teb.lock.Unlock()
 	for _, p := range teb.PropertyCustom {
 		if p.GetIsInherited() {

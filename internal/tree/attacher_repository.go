@@ -12,7 +12,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/davecgh/go-spew/spew"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -41,26 +40,16 @@ func (ter *Repository) Destroy() {
 		panic(`Repository.Destroy called without Parent to unlink from`)
 	}
 	// call before unlink since it requires tec.Parent.*
-	spew.Dump("Repo destroy")
 	ter.actionDelete()
 	ter.deletePropertyAllLocal()
 	ter.deletePropertyAllInherited()
 	ter.deleteCheckLocalAll()
 
-	wg := new(sync.WaitGroup)
-	ter.lock.RLock()
-	spew.Dump("Repo delete props + checks done")
-	for child := range ter.Children {
-		wg.Add(1)
-		go func(c string) {
-			defer wg.Done()
-			ter.Children[c].Destroy()
-		}(child)
+	clone := ter.Clone()
+	for c := range clone.Children {
+		ter.Children[c].Destroy()
 	}
-	ter.lock.RUnlock()
-	wg.Wait()
 
-	spew.Dump("Repo delete w.Wait is done")
 	// the Destroy handler of Fault calls
 	// updateFaultRecursive(nil) on us
 	ter.Fault.Destroy()
@@ -74,7 +63,6 @@ func (ter *Repository) Destroy() {
 		ChildID:    ter.GetID(),
 	},
 	)
-	spew.Dump("Repo unlink done")
 	ter.setAction(nil)
 }
 

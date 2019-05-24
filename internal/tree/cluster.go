@@ -13,9 +13,9 @@ import (
 	"reflect"
 	"sync"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/mjolnir42/soma/lib/proto"
 	uuid "github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 type Cluster struct {
@@ -81,6 +81,8 @@ func NewCluster(spec ClusterSpec) *Cluster {
 }
 
 func (tec Cluster) Clone() *Cluster {
+	tec.lock.RLock()
+	defer tec.lock.RUnlock()
 	cl := Cluster{
 		Name:           tec.Name,
 		State:          tec.State,
