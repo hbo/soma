@@ -15,9 +15,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/mjolnir42/soma/internal/handler"
 	"github.com/mjolnir42/soma/internal/msg"
+	"github.com/sirupsen/logrus"
 )
 
 // XXX BUG shutdown information must be transported to the
@@ -35,12 +35,14 @@ type GrimReaper struct {
 	reqLog   *logrus.Logger
 	errLog   *logrus.Logger
 	soma     *Soma
+	lock     *sync.Mutex
 }
 
 // newGrimReaper returns a new GrimReaper handler with input
 // buffer of length
 func newGrimReaper(length int, s *Soma) (grim *GrimReaper) {
 	grim = &GrimReaper{}
+	grim.lock = &sync.Mutex{}
 	grim.Input = make(chan msg.Request, length)
 	grim.Shutdown = make(chan struct{})
 	grim.soma = s
@@ -49,10 +51,12 @@ func newGrimReaper(length int, s *Soma) (grim *GrimReaper) {
 
 // Register initializes resources provided by the Soma app
 func (grim *GrimReaper) Register(c *sql.DB, l ...*logrus.Logger) {
+	grim.lock.Lock()
 	grim.conn = c
 	grim.appLog = l[0]
 	grim.reqLog = l[1]
 	grim.errLog = l[2]
+	grim.lock.Unlock()
 }
 
 // RegisterRequests links the handler inside the handlermap to the requests
@@ -79,16 +83,18 @@ func (grim *GrimReaper) PriorityIntake() chan msg.Request {
 func (grim *GrimReaper) Run() {
 	// defer calls stack in LIFO order
 	defer os.Exit(0)
+
+	grim.lock.Lock()
 	defer grim.conn.Close()
+	grim.lock.Unlock()
 
 	var res bool
-	lock := sync.Mutex{}
 
 runloop:
 	for {
 		select {
 		case <-grim.Shutdown:
-			lock.Lock()
+			grim.lock.Lock()
 			go func() {
 				req := msg.Request{
 					Section: msg.SectionSystem,
@@ -96,23 +102,23 @@ runloop:
 				}
 				req.Reply = make(chan msg.Result, 2)
 				res = grim.process(&req)
-				lock.Unlock()
+				grim.lock.Unlock()
 			}()
 		case req := <-grim.Input:
 			// this is mainly so the go runtime does not optimize
 			// away waiting for the shutdown routine
-			lock.Lock()
+			grim.lock.Lock()
 			go func() {
 				res = grim.process(&req)
-				lock.Unlock()
+				grim.lock.Unlock()
 			}()
 		}
 		break runloop
 	}
 	// blocks until the go routine has unlocked the mutex
-	lock.Lock()
+	grim.lock.Lock()
 	if !res {
-		lock.Unlock()
+		grim.lock.Unlock()
 		goto runloop
 	}
 
