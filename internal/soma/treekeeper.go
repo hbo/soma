@@ -88,7 +88,7 @@ type TreeKeeper struct {
 		rebuildLevel    string
 	}
 	soma *Soma
-	lock *sync.Mutex
+	lock sync.Mutex
 }
 
 // newTreeKeeper returns a new TreeKeeper handler with input buffer
@@ -98,7 +98,6 @@ func newTreeKeeper(length int) (tk *TreeKeeper) {
 	tk.Input = make(chan msg.Request, length)
 	tk.Shutdown = make(chan struct{})
 	tk.Stop = make(chan struct{})
-	tk.lock = &sync.Mutex{}
 	return
 }
 

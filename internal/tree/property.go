@@ -9,9 +9,11 @@
 package tree
 
 import (
-	log "github.com/sirupsen/logrus"
+	"sync"
+
 	"github.com/mjolnir42/soma/lib/proto"
 	uuid "github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 type Property interface {
@@ -74,6 +76,7 @@ type PropertyCustom struct {
 	Value string
 	// Filled with IDs during from-DB load to restore with same IDs
 	Instances []PropertyInstance
+	lock      sync.RWMutex
 }
 
 func (p *PropertyCustom) GetType() string {
@@ -142,6 +145,8 @@ func (p *PropertyCustom) GetInstanceID(objType string, objID uuid.UUID, l *log.L
 }
 
 func (p *PropertyCustom) SetID(id uuid.UUID) {
+	p.lock.Lock()
+	defer p.lock.Unlock()
 	p.ID, _ = uuid.FromString(id.String())
 }
 
@@ -169,7 +174,9 @@ func (p *PropertyCustom) SetSourceType(s string) {
 	p.SourceType = s
 }
 
-func (p PropertyCustom) Clone() Property {
+func (p *PropertyCustom) Clone() Property {
+	p.lock.RLock()
+	defer p.lock.RUnlock()
 	cl := PropertyCustom{
 		SourceType:   p.SourceType,
 		Inherited:    p.Inherited,
@@ -179,6 +186,7 @@ func (p PropertyCustom) Clone() Property {
 		Key:          p.Key,
 		Value:        p.Value,
 	}
+
 	cl.ID, _ = uuid.FromString(p.ID.String())
 	cl.InheritedFrom, _ = uuid.FromString(p.InheritedFrom.String())
 	cl.SourceID, _ = uuid.FromString(p.SourceID.String())
@@ -225,6 +233,7 @@ type PropertyService struct {
 	ServiceName   string
 	Attributes    []proto.ServiceAttribute
 	Instances     []PropertyInstance
+	lock          sync.RWMutex
 }
 
 func (p *PropertyService) GetType() string {
@@ -285,6 +294,8 @@ func (p *PropertyService) GetInstanceID(objType string, objID uuid.UUID, l *log.
 }
 
 func (p *PropertyService) SetID(id uuid.UUID) {
+	p.lock.Lock()
+	defer p.lock.Unlock()
 	p.ID, _ = uuid.FromString(id.String())
 }
 
@@ -312,7 +323,9 @@ func (p *PropertyService) SetSourceType(s string) {
 	p.SourceType = s
 }
 
-func (p PropertyService) Clone() Property {
+func (p *PropertyService) Clone() Property {
+	p.lock.RLock()
+	defer p.lock.RUnlock()
 	cl := PropertyService{
 		SourceType:   p.SourceType,
 		Inherited:    p.Inherited,
@@ -321,6 +334,7 @@ func (p PropertyService) Clone() Property {
 		View:         p.View,
 		ServiceName:  p.ServiceName,
 	}
+
 	cl.ID = uuid.Must(uuid.FromString(p.ID.String()))
 	cl.SourceID = uuid.Must(uuid.FromString(p.SourceID.String()))
 	cl.InheritedFrom = uuid.Must(uuid.FromString(p.InheritedFrom.String()))
@@ -382,6 +396,7 @@ type PropertySystem struct {
 	Key           string
 	Value         string
 	Instances     []PropertyInstance
+	lock          sync.RWMutex
 }
 
 func (p *PropertySystem) GetType() string {
@@ -442,6 +457,8 @@ func (p *PropertySystem) GetInstanceID(objType string, objID uuid.UUID, l *log.L
 }
 
 func (p *PropertySystem) SetID(id uuid.UUID) {
+	p.lock.Lock()
+	defer p.lock.Unlock()
 	p.ID, _ = uuid.FromString(id.String())
 }
 
@@ -469,7 +486,9 @@ func (p *PropertySystem) SetSourceType(s string) {
 	p.SourceType = s
 }
 
-func (p PropertySystem) Clone() Property {
+func (p *PropertySystem) Clone() Property {
+	p.lock.RLock()
+	defer p.lock.RUnlock()
 	cl := PropertySystem{
 		SourceType:   p.SourceType,
 		Inherited:    p.Inherited,
@@ -479,6 +498,7 @@ func (p PropertySystem) Clone() Property {
 		Key:          p.Key,
 		Value:        p.Value,
 	}
+
 	cl.ID, _ = uuid.FromString(p.ID.String())
 	cl.SourceID, _ = uuid.FromString(p.SourceID.String())
 	cl.InheritedFrom, _ = uuid.FromString(p.InheritedFrom.String())
@@ -523,6 +543,7 @@ type PropertyOncall struct {
 	Name          string
 	Number        string
 	Instances     []PropertyInstance
+	lock          sync.RWMutex
 }
 
 func (p *PropertyOncall) GetType() string {
@@ -591,6 +612,8 @@ func (p *PropertyOncall) GetInstanceID(objType string, objID uuid.UUID, l *log.L
 }
 
 func (p *PropertyOncall) SetID(id uuid.UUID) {
+	p.lock.Lock()
+	defer p.lock.Unlock()
 	p.ID, _ = uuid.FromString(id.String())
 }
 
@@ -618,7 +641,9 @@ func (p *PropertyOncall) SetSourceType(s string) {
 	p.SourceType = s
 }
 
-func (p PropertyOncall) Clone() Property {
+func (p *PropertyOncall) Clone() Property {
+	p.lock.RLock()
+	defer p.lock.RUnlock()
 	cl := PropertyOncall{
 		SourceType:   p.SourceType,
 		Inherited:    p.Inherited,
@@ -628,6 +653,7 @@ func (p PropertyOncall) Clone() Property {
 		Name:         p.Name,
 		Number:       p.Number,
 	}
+
 	cl.ID, _ = uuid.FromString(p.ID.String())
 	cl.SourceID, _ = uuid.FromString(p.SourceID.String())
 	cl.OncallID, _ = uuid.FromString(p.OncallID.String())
