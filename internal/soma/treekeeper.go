@@ -16,9 +16,9 @@ import (
 	"os"
 	"path/filepath"
 	"runtime/debug"
+	"sync"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/mjolnir42/soma/internal/handler"
 	"github.com/mjolnir42/soma/internal/msg"
 	"github.com/mjolnir42/soma/internal/stmt"
@@ -26,6 +26,7 @@ import (
 	"github.com/mjolnir42/soma/internal/tree"
 	metrics "github.com/rcrowley/go-metrics"
 	uuid "github.com/satori/go.uuid"
+	"github.com/sirupsen/logrus"
 )
 
 // Metrics is the map of runtime metric registries
@@ -87,6 +88,7 @@ type TreeKeeper struct {
 		rebuildLevel    string
 	}
 	soma *Soma
+	lock *sync.Mutex
 }
 
 // newTreeKeeper returns a new TreeKeeper handler with input buffer
@@ -96,6 +98,7 @@ func newTreeKeeper(length int) (tk *TreeKeeper) {
 	tk.Input = make(chan msg.Request, length)
 	tk.Shutdown = make(chan struct{})
 	tk.Stop = make(chan struct{})
+	tk.lock = &sync.Mutex{}
 	return
 }
 
@@ -275,8 +278,9 @@ broken:
 	}
 
 	tk.appLog.Printf("TK[%s]: ready for service!", tk.meta.repoName)
+	tk.lock.Lock()
 	tk.status.isReady = true
-
+	tk.lock.Unlock()
 	// in observer mode, the TreeKeeper does nothing after loading
 	// the tree
 	if tk.soma.conf.Observer {
@@ -346,6 +350,8 @@ exit:
 }
 
 func (tk *TreeKeeper) isReady() bool {
+	tk.lock.Lock()
+	defer tk.lock.Unlock()
 	return tk.status.isReady
 }
 
