@@ -25,7 +25,7 @@ func specRepoCheck(spec RepositorySpec) bool {
 	}
 	l := utf8.RuneCountInString(spec.Name)
 	switch {
-	case l < 4:
+	case l < 3:
 		return false
 	case l > 128:
 		return false
@@ -134,7 +134,7 @@ func specNodeCheck(spec NodeSpec) bool {
 	}
 	l := utf8.RuneCountInString(spec.Name)
 	switch {
-	case l < 4:
+	case l <= 0:
 		return false
 	case l > 256:
 		return false
