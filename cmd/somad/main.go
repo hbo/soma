@@ -11,6 +11,9 @@ import (
 	"syscall"
 	"time"
 
+	"runtime"
+	"runtime/pprof"
+
 	"github.com/asaskevich/govalidator"
 	"github.com/client9/reopen"
 	"github.com/mjolnir42/soma/internal/config"
@@ -35,6 +38,8 @@ var (
 	// version string set at compile time
 	somaVersion string
 )
+var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to `file`")
+var memprofile = flag.String("memprofile", "", "write memory profile to `file`")
 
 func init() {
 	logrus.SetOutput(os.Stderr)
@@ -61,7 +66,28 @@ func main() {
 	flag.BoolVar(&forcedCorruption, `allowdatacorruption`, false, `Allow single-repo mode on production`)
 	flag.BoolVar(&versionFlag, `version`, false, `Print version information`)
 	flag.Parse()
-
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			logrus.Fatal("could not create CPU profile: ", err)
+		}
+		defer f.Close()
+		if err := pprof.StartCPUProfile(f); err != nil {
+			logrus.Fatal("could not start CPU profile: ", err)
+		}
+		defer pprof.StopCPUProfile()
+	}
+	if *memprofile != "" {
+		f, err := os.Create(*memprofile)
+		if err != nil {
+			logrus.Fatal("could not create memory profile: ", err)
+		}
+		defer f.Close()
+		runtime.GC() // get up-to-date statistics
+		if err := pprof.WriteHeapProfile(f); err != nil {
+			logrus.Fatal("could not write memory profile: ", err)
+		}
+	}
 	if versionFlag {
 		version() // exit(0)
 	}
