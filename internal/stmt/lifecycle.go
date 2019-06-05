@@ -85,8 +85,8 @@ WHERE  (  scic.status = '` + proto.DeploymentRolloutInProgress + `'::varchar
        OR scic.status = '` + proto.DeploymentAwaitingDeprovision + `'::varchar
        OR scic.status = '` + proto.DeploymentDeprovisionInProgress + `'::varchar )
 AND    sms.monitoring_callback_uri IS NOT NULL
-AND    ( scic.status_last_updated_at IS NULL OR  ( NOW() > (scic.status_last_updated_at + '5 minute'::interval ) )  )
-AND    ( scic.notified_at IS NULL OR NOW() > (scic.notified_at + '5 minute'::interval ) )
+AND    ( scic.status_last_updated_at IS NULL OR  ( NOW() > (scic.status_last_updated_at + '15 minute'::interval ) )  )
+AND    ( scic.notified_at IS NULL OR NOW() > (scic.notified_at + '15 minute'::interval ) )
 AND    NOT sci.update_available;`
 
 	LifecycleSetNotified = `
