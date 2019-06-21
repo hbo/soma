@@ -211,8 +211,10 @@ AND    node_deleted = 'no';`
 
 	NodePurge = `
 DELETE FROM soma.nodes
-WHERE       node_id = $1
-AND         node_deleted;`
+WHERE       node_deleted
+AND         object_state = 'unassigned'
+AND         ( $1
+       OR   node_id = $2 );`
 )
 
 func init() {

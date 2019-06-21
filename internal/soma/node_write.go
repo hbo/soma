@@ -11,11 +11,11 @@ package soma // import "github.com/mjolnir42/soma/internal/soma"
 import (
 	"database/sql"
 
-	"github.com/sirupsen/logrus"
 	"github.com/mjolnir42/soma/internal/handler"
 	"github.com/mjolnir42/soma/internal/msg"
 	"github.com/mjolnir42/soma/internal/stmt"
 	uuid "github.com/satori/go.uuid"
+	"github.com/sirupsen/logrus"
 )
 
 // NodeWrite handles write requests for nodes
@@ -200,14 +200,26 @@ func (w *NodeWrite) purge(q *msg.Request, mr *msg.Result) {
 		res sql.Result
 	)
 
+	id := `00000000-0000-0000-0000-000000000000`
+	nocompare := true
+
+	if q.Node.ID != `` {
+		id = q.Node.ID
+		nocompare = false
+	}
 	if res, err = w.stmtPurge.Exec(
-		q.Node.ID,
+		nocompare,
+		id,
 	); err != nil {
 		mr.ServerError(err, q.Section)
 		return
 	}
-	if mr.RowCnt(res.RowsAffected()) {
-		mr.Node = append(mr.Node, q.Node)
+	if nocompare {
+		mr.RowCntMany(res.RowsAffected())
+	} else {
+		if mr.RowCnt(res.RowsAffected()) {
+			mr.Node = append(mr.Node, q.Node)
+		}
 	}
 }
 

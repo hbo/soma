@@ -355,7 +355,7 @@ func nodeMgmtPurge(c *cli.Context) (err error) {
 		if err := adm.VerifyNoArgument(c); err != nil {
 			return err
 		}
-		path = `node`
+		path = `/node/`
 	default:
 		if err := adm.VerifySingleArgument(c); err != nil {
 			return err

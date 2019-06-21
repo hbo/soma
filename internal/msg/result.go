@@ -134,6 +134,7 @@ func (r *Result) RowCntMany(i int64, err error) bool {
 		r.SetError(fmt.Errorf(`No rows affected`))
 	case i >= 1:
 		r.OK()
+		r.SetError(fmt.Errorf(`%d rows affected`, i))
 		return true
 	default:
 		r.ServerError(fmt.Errorf("Invalid number of rows affected: %d", i))
