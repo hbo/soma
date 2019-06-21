@@ -318,6 +318,22 @@ func nodeMgmtRemove(c *cli.Context) (err error) {
 	if id, err = adm.LookupNodeID(c.Args().First()); err != nil {
 		return err
 	}
+
+	if nconf, err := adm.nodeConfigByID(id) ; err == nil {
+		// Unassign node first from its bucket
+		// nconf.RepositoryID
+		// nconf.BucketID
+		// this is copied from cmd/soma/team__node.go
+		path := fmt.Sprintf("/repository/%s/bucket/%s/node/%s/config",
+			url.QueryEscape(config.RepositoryID),
+			url.QueryEscape(config.BucketID),
+			url.QueryEscape(nodeID),
+		)
+		if err =  adm.Perform(`delete`, path, `node::unassign`, nil, c); err != nil {
+			return err
+		}
+	}
+
 	path = fmt.Sprintf("/node/%s", id)
 
 	return adm.Perform(`deletebody`, path, `node-mgmt::remove`, req, c)
