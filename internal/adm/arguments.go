@@ -451,8 +451,8 @@ func parseThresholdChain(result *proto.CheckConfigThreshold,
 	var err error
 	result.Predicate.Symbol = tParse[`predicate`][0]
 	result.Level.Name = tParse[`level`][0]
-	if result.Value, err = strconv.ParseInt(
-		tParse[`value`][0], 10, 64,
+	if result.Value, err = strconv.ParseFloat(
+		tParse[`value`][0], 32,
 	); err != nil {
 		return fmt.Errorf("Syntax error, value argument not"+
 			" numeric: %s", tParse[`value`][0])

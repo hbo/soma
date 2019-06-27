@@ -269,7 +269,8 @@ func (r *CheckConfigurationRead) thresholds(cnf *proto.CheckConfig) error {
 	var (
 		predicate, threshold, lvlName, lvlShort string
 		configID                                string
-		lvlNumeric, value                       int64
+		lvlNumeric int64
+		value                       float64
 		err                                     error
 		rows                                    *sql.Rows
 	)
@@ -298,8 +299,8 @@ func (r *CheckConfigurationRead) thresholds(cnf *proto.CheckConfig) error {
 			return err
 		}
 
-		if value, err = strconv.ParseInt(
-			threshold, 10, 64,
+		if value, err = strconv.ParseFloat(
+			threshold,  32,
 		); err != nil {
 			return err
 		}

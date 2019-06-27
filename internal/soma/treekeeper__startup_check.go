@@ -101,7 +101,8 @@ func (tk *TreeKeeper) startupScopedChecks(typ string, stMap map[string]*sql.Stmt
 		cstrType, value1, value2, value3, itemID, itemCfgID          string
 		monitoringID, cstrHash, cstrValHash, instSvc, instSvcCfgHash string
 		instSvcCfg, errLocation                                      string
-		levelNumeric, numVal, interval, version                      int64
+		levelNumeric, interval, version                      int64
+		numVal float64
 		isActive, hasInheritance, isChildrenOnly, isEnabled          bool
 		grOrder                                                      map[string][]string
 		grWeird                                                      map[string]string
@@ -221,7 +222,7 @@ func (tk *TreeKeeper) startupScopedChecks(typ string, stMap map[string]*sql.Stmt
 				goto fail
 			}
 			// ignore error since we converted this into the DB from int64
-			numVal, _ = strconv.ParseInt(threshold, 10, 64)
+			numVal, _ = strconv.ParseFloat(threshold, 32)
 
 			// save threshold
 			victim.Thresholds = append(victim.Thresholds,
@@ -638,7 +639,8 @@ func (tk *TreeKeeper) startupScopedReapplyCheckConfig(typ string, stMap map[stri
 		configRows, threshRows, cstrRows            *sql.Rows
 		predicate, threshold, levelName, levelShort string
 		cstrType, value1, value2, value3            string
-		levelNumeric, numVal                        int64
+		levelNumeric                        int64
+		numVal  float64
 		treeCheck                                   *tree.Check
 		nullBucketID                                sql.NullString
 	)
@@ -694,7 +696,7 @@ func (tk *TreeKeeper) startupScopedReapplyCheckConfig(typ string, stMap map[stri
 				goto fail
 			}
 			// ignore errors, we converted into the DB from int64
-			numVal, _ = strconv.ParseInt(threshold, 10, 64)
+			numVal, _ = strconv.ParseFloat(threshold, 32)
 
 			// add threshold to config
 			conf.Thresholds = append(conf.Thresholds,

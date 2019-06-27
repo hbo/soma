@@ -142,7 +142,7 @@ func (c *CheckConfigConstraint) DeepCompareSlice(a []CheckConfigConstraint) bool
 type CheckConfigThreshold struct {
 	Predicate Predicate
 	Level     Level
-	Value     int64
+	Value     float64
 }
 
 func (c *CheckConfigThreshold) Clone() CheckConfigThreshold {

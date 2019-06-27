@@ -172,7 +172,8 @@ func exportCheckConfigThresholds(prepStmt *sql.Stmt, queryID string) (
 		rows                                      *sql.Rows
 		checkConfigID, predicateSymbol, threshold string
 		levelName, levelShortName                 string
-		levelNumeric, thresholdValue              int64
+		levelNumeric                              int64
+		thresholdValue                            float64
 		thresholds                                []proto.CheckConfigThreshold
 	)
 	if rows, err = prepStmt.Query(queryID); err != nil {
@@ -190,7 +191,7 @@ func exportCheckConfigThresholds(prepStmt *sql.Stmt, queryID string) (
 			rows.Close()
 			return nil, err
 		}
-		thresholdValue, _ = strconv.ParseInt(threshold, 10, 64)
+		thresholdValue, _ = strconv.ParseFloat(threshold, 32)
 
 		thr := proto.CheckConfigThreshold{
 			Predicate: proto.Predicate{

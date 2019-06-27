@@ -56,7 +56,7 @@ threshloop:
 		if _, err = stm[`CreateCheckConfigurationThreshold`].Exec(
 			conf.ID,
 			thr.Predicate.Symbol,
-			strconv.FormatInt(thr.Value, 10),
+			strconv.FormatFloat(thr.Value, 'f', 2, 32),
 			thr.Level.Name,
 		); err != nil {
 			break threshloop

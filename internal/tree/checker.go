@@ -122,7 +122,7 @@ func (ci *CheckItem) Clone() CheckItem {
 type CheckThreshold struct {
 	Predicate string
 	Level     uint8
-	Value     int64
+	Value     float64
 }
 
 func (ct *CheckThreshold) Clone() CheckThreshold {
