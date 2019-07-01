@@ -45,7 +45,7 @@ var UpgradeVersions = map[string]map[int]func(int, string, bool) int{
 		201811120002: upgradeSomaTo201811150001,
 		201811150001: upgradeSomaTo201901300001,
 		201901300001: upgradeSomaTo201903130001,
-		201905130001: upgradeSomaTo201905130001,
+		201903130001: upgradeSomaTo201905130001,
 	},
 	`root`: map[int]func(int, string, bool) int{
 		000000000001: installRoot201605150001,
@@ -73,8 +73,8 @@ loop:
 			// schema is already as updated as we need
 			continue loop
 		}
-
 		for f, ok := UpgradeVersions[schema][version]; ok; f, ok = UpgradeVersions[schema][version] {
+
 			version = f(version, tool, printOnly)
 			if version == 0 {
 				// something broke
@@ -1141,7 +1141,7 @@ func upgradeSomaTo201903130001(curr int, tool string, printOnly bool) int {
 }
 
 func upgradeSomaTo201905130001(curr int, tool string, printOnly bool) int {
-	if curr != 201905130001 {
+	if curr != 201903130001 {
 		return 0
 	}
 	stmts := []string{
@@ -1241,7 +1241,10 @@ func executeUpgrades(stmts []string, printOnly bool) {
 			fmt.Println(stmt)
 			continue
 		}
-		tx.Exec(stmt)
+		_, err := tx.Exec(stmt)
+		if err != nil {
+			fmt.Printf("%s\nError: %#v", stmt, err)
+		}
 	}
 
 	if !printOnly {
