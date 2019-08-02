@@ -474,7 +474,10 @@ func (w *PropertyWrite) updateTreekeeper(authUser, serviceID, serviceName, view,
 		request.Section = msg.SectionNodeConfig
 		request.TargetEntity = msg.EntityNode
 		req := proto.NewNodeRequest()
+		req.Node.Config = &proto.NodeConfig{}
 		req.Node.ID = entityID
+		req.Node.Config.RepositoryID = repositoryID
+		req.Node.Config.BucketID = bucketID
 		req.Node.Properties = &[]proto.Property{prop}
 		request.Node = req.Node.Clone()
 	}
