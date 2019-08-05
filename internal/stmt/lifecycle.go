@@ -83,7 +83,10 @@ WHERE  (  scic.status = '` + proto.DeploymentRolloutInProgress + `'::varchar
        OR ( scic.status = '` + proto.DeploymentAwaitingRollout + `'::varchar
             AND NOT sci.deleted )
        OR scic.status = '` + proto.DeploymentAwaitingDeprovision + `'::varchar
-       OR scic.status = '` + proto.DeploymentDeprovisionInProgress + `'::varchar )
+       OR scic.status = '` + proto.DeploymentDeprovisionInProgress + `'::varchar
+    	   OR ( scic.status = '` + proto.DeploymentRolloutFailed + `'::varchar 
+		    AND NOT sci.deleted )
+		)
 AND    sms.monitoring_callback_uri IS NOT NULL
 AND    ( scic.status_last_updated_at IS NULL OR  ( NOW() > (scic.status_last_updated_at + '15 minute'::interval ) )  )
 AND    ( scic.notified_at IS NULL OR NOW() > (scic.notified_at + '15 minute'::interval ) )
