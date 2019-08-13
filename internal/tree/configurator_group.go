@@ -517,8 +517,8 @@ func (g *Group) createNoServiceCheckInstance(ctx *checkContext) {
 			g.lock.RLock()
 
 			g.log.Printf("TK[%s]: Failed to match computed instance to loaded instances."+
-				" ObjType=%s, ObjId=%s, CheckID=%s", `group`, g.ID.String(), ctx.uuid,
-				g.GetRepositoryName())
+				" ObjType=%s, ObjId=%s, CheckID=%s", g.GetRepositoryName(), `group`, g.ID.String(), ctx.uuid,
+				)
 			g.Fault.Error <- &Error{
 				Action: `Failed to match a computed instance to loaded data`,
 			}

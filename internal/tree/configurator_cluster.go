@@ -518,8 +518,8 @@ func (c *Cluster) createNoServiceCheckInstance(ctx *checkContext) {
 			c.lock.RLock()
 
 			c.log.Printf("TK[%s]: Failed to match computed instance to loaded instances."+
-				" ObjType=%s, ObjId=%s, CheckID=%s", `cluster`, c.ID.String(), ctx.uuid,
-				c.GetRepositoryName())
+				" ObjType=%s, ObjId=%s, CheckID=%s", c.GetRepositoryName(), `cluster`, c.ID.String(), ctx.uuid,
+				)
 			c.Fault.Error <- &Error{
 				Action: `Failed to match a computed instance to loaded data`,
 			}
