@@ -321,13 +321,14 @@ func (w *PropertyWrite) update(q *msg.Request, mr *msg.Result) {
 
 func (w *PropertyWrite) updateService(q *msg.Request, mr *msg.Result) {
 	var (
-		res                                                                    sql.Result
-		rows                                                                   *sql.Rows
-		err                                                                    error
-		tx                                                                     *sql.Tx
-		attr                                                                   proto.ServiceAttribute
-		repositoryID, bucketID, entityID, entityType, propertyInstanceID, view string
-		inheritance                                                            bool
+		res                                                          sql.Result
+		rows                                                         *sql.Rows
+		err                                                          error
+		tx                                                           *sql.Tx
+		attr                                                         proto.ServiceAttribute
+		repositoryID, entityID, entityType, propertyInstanceID, view string
+		bucketID                                                     sql.NullString
+		inheritance                                                  bool
 	)
 
 	if tx, err = w.conn.Begin(); err != nil {
@@ -386,18 +387,19 @@ func (w *PropertyWrite) updateService(q *msg.Request, mr *msg.Result) {
 			return
 		}
 	}
+
+	// Update was successful, we have to update the treekeepers
+	if rows, err = w.stmtServiceGetAllInstances.Query(
+		q.Property.Service.ID,
+	); err != nil && err != sql.ErrNoRows {
+		tx.Rollback()
+		mr.ServerError(err, q.Section)
+		return
+	}
 	if err = tx.Commit(); err != nil {
 		mr.ServerError(err, q.Section)
 		return
 	}
-	// Update was successful, we have to update the treekeepers
-	if rows, err = w.stmtServiceGetAllInstances.Query(
-		q.Property.Service.ID,
-	); err != nil {
-		mr.ServerError(err, q.Section)
-		return
-	}
-
 	for rows.Next() {
 		if err = rows.Scan(&bucketID, &entityID, &entityType, &repositoryID, &propertyInstanceID, &view, &inheritance); err != nil {
 			rows.Close()
@@ -405,7 +407,7 @@ func (w *PropertyWrite) updateService(q *msg.Request, mr *msg.Result) {
 			return
 		}
 		//send a request to the treekeeper to update the property within the tree
-		w.updateTreekeeper(q.AuthUser, q.Property.Service.ID, q.Property.Service.Name, view, q.Property.Service.TeamID, repositoryID, bucketID, entityID, entityType, propertyInstanceID, inheritance, q.Property.Service.Attributes)
+		w.updateTreekeeper(q.AuthUser, q.Property.Service.ID, q.Property.Service.Name, view, q.Property.Service.TeamID, repositoryID, bucketID.String, entityID, entityType, propertyInstanceID, inheritance, q.Property.Service.Attributes)
 	}
 	if err = rows.Err(); err != nil {
 		mr.ServerError(err, q.Section)
