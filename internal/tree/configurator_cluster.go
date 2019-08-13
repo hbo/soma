@@ -291,6 +291,10 @@ func (c *Cluster) processCheckForUpdates(chkName string, startup bool) {
 		c.ID.String(), chkName, ctx.brokeConstraint,
 	)
 	if ctx.brokeConstraint {
+		if !ctx.startup {
+			c.pruneOldCheckInstances(ctx)
+			c.dispatchCheckInstanceUpdates(ctx)
+		}
 		return
 	}
 
