@@ -277,6 +277,11 @@ func (n *Node) processCheckForUpdates(chkName string, startup bool) {
 		n.ID.String(), chkName, ctx.brokeConstraint,
 	)
 	if ctx.brokeConstraint {
+		if !ctx.startup {
+			n.pruneOldCheckInstances(ctx)
+			n.dispatchCheckInstanceUpdates(ctx)
+
+		}
 		return
 	}
 

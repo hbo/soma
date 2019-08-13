@@ -290,6 +290,10 @@ func (g *Group) processCheckForUpdates(chkName string, startup bool) {
 		g.ID.String(), chkName, ctx.brokeConstraint,
 	)
 	if ctx.brokeConstraint {
+		if !ctx.startup {
+			g.pruneOldCheckInstances(ctx)
+			g.dispatchCheckInstanceUpdates(ctx)
+		}
 		return
 	}
 
